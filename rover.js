@@ -8,19 +8,26 @@ class Rover {
 
   receiveMessage(message){
     let results = [];
-    for (let i = 0; message.commands.length < i; i++)
+    for (let i = 0; i < message.commands.length ; i++)
     {
       if (message.commands[i].commandType==="MOVE"){
-        results.push({completed: true})
+        if(this.mode==='LOW_POWER'){
+         results.push({completed: false})
+        }else{
+        this.position = message.commands[i].value;
+        results.push({completed: true})}
       }else if (message.commands[i].commandType==="STATUS_CHECK"){
         results.push({completed: true, roverStatus: {mode: this.mode, generatorWatts: this.generatorWatts, position: this.position}})
       }else if (message.commands[i].commandType==="MODE_CHANGE"){
+        this.mode = message.commands[i].value;
         results.push({completed: true})
+      }else {
+        results.push({completed: false})
       }
     }
 return {
   message: message.name,
-  results: results,
+  results: results
 }
   };
 }
